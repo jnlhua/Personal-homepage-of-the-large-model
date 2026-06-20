@@ -2,6 +2,7 @@ import LogoLoop from './LogoLoop'
 import Orb from './Orb'
 import ShinyText from './ShinyText'
 import BorderGlow from './BorderGlow'
+import Folder from './Folder'
 
 export default function About() {
   const stats = [
@@ -28,7 +29,7 @@ export default function About() {
       title: '国家励志奖学金',
       desc: '兰州资源环境职业技术大学',
       year: '2024',
-      img: null,
+      img: '/images/guolizhi.png',
     },
     {
       title: '校级三好学生',
@@ -37,6 +38,40 @@ export default function About() {
       img: null,
     },
   ]
+
+  const folderItems = awards.map((a) => ({
+    preview: (
+      <span style={{ fontSize: '10px', lineHeight: 1.3, fontWeight: 500 }}>
+        {a.title}
+      </span>
+    ),
+    content: (
+      <BorderGlow
+        className="award-card-wrapper cursor-target"
+        edgeSensitivity={25}
+        glowColor="260 80 70"
+        backgroundColor="#0a0a14"
+        borderRadius={16}
+        glowRadius={25}
+        glowIntensity={0.7}
+        coneSpread={20}
+        colors={['#6366f1', '#a855f7', '#22d3ee']}
+      >
+        <div className="award-card">
+          {a.img && (
+            <div className="award-card__img">
+              <img src={a.img} alt={a.title} loading="lazy" />
+            </div>
+          )}
+          <div className="award-card__body">
+            <span className="award-card__year">{a.year}</span>
+            <h4 className="award-card__title">{a.title}</h4>
+            <p className="award-card__desc">{a.desc}</p>
+          </div>
+        </div>
+      </BorderGlow>
+    ),
+  }))
 
   const techLogos = [
     { src: 'https://cdn.simpleicons.org/python/3776AB', alt: 'Python', title: 'Python' },
@@ -108,35 +143,13 @@ export default function About() {
 
         <div className="about__awards anim-item" data-anim="slide-right">
           <h3 className="about__awards-title">荣誉与证书</h3>
-          <div className="about__awards-grid">
-            {awards.map((a, i) => (
-              <BorderGlow
-                key={i}
-                className="award-card-wrapper cursor-target"
-                edgeSensitivity={25}
-                glowColor="260 80 70"
-                backgroundColor="#0a0a14"
-                borderRadius={16}
-                glowRadius={25}
-                glowIntensity={0.7}
-                coneSpread={20}
-                colors={['#6366f1', '#a855f7', '#22d3ee']}
-              >
-                <div className="award-card">
-                  {a.img && (
-                    <div className="award-card__img">
-                      <img src={a.img} alt={a.title} loading="lazy" />
-                    </div>
-                  )}
-                  <div className="award-card__body">
-                    <span className="award-card__year">{a.year}</span>
-                    <h4 className="award-card__title">{a.title}</h4>
-                    <p className="award-card__desc">{a.desc}</p>
-                  </div>
-                </div>
-              </BorderGlow>
-            ))}
-          </div>
+          <Folder
+            color="#6366f1"
+            size={1.6}
+            items={folderItems}
+            className="awards-folder"
+            hint="点击打开文件夹查看证书"
+          />
         </div>
 
         {/* Tech Stack LogoLoop */}

@@ -1,9 +1,23 @@
 import ShinyText from './ShinyText'
 import BorderGlow from './BorderGlow'
+import DotField from './DotField'
 
 export default function Contact() {
   return (
     <section id="contact" className="contact animate-section">
+      <div className="contact__dotfield">
+        <DotField
+          dotRadius={2.5}
+          dotSpacing={12}
+          bulgeStrength={80}
+          glowRadius={200}
+          sparkle={true}
+          waveAmplitude={0}
+          gradientFrom="rgba(99, 102, 241, 0.8)"
+          gradientTo="rgba(168, 85, 247, 0.7)"
+          glowColor="rgba(139, 92, 246, 0.6)"
+        />
+      </div>
       <div className="section-container">
         <div className="contact__content anim-item">
           <div className="section-label">04 / Contact</div>

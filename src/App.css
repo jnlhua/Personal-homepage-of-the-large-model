@@ -558,6 +558,21 @@
   color: var(--text);
 }
 
+/* Folder component for awards */
+.awards-folder {
+  padding: 20px 0;
+}
+
+.awards-folder .folder-visual {
+  margin: 0 auto;
+}
+
+.awards-folder .folder-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
 .about__awards-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -910,6 +925,20 @@
   justify-content: center;
   position: relative;
   padding: 80px 0;
+}
+
+/* DotField background */
+.contact__dotfield {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.contact .section-container {
+  position: relative;
+  z-index: 1;
 }
 
 .contact::before {

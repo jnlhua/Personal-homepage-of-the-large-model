@@ -1,0 +1,163 @@
+.folder-component {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* ── Folder 3D visual ── */
+.folder-visual {
+  position: relative;
+  width: 140px;
+  height: 110px;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(var(--folder-scale, 1));
+}
+
+.folder-visual:hover {
+  transform: scale(var(--folder-scale, 1)) translateY(-6px);
+}
+
+.folder-visual--open {
+  transform: scale(var(--folder-scale, 1)) translateY(-6px);
+}
+
+/* Back panel */
+.folder-visual__back {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--folder-color) 85%, black);
+  border-radius: 4px 12px 12px 12px;
+  z-index: 0;
+}
+
+/* Tab on top-left */
+.folder-visual__tab {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: 42px;
+  height: 12px;
+  background: color-mix(in srgb, var(--folder-color) 85%, black);
+  border-radius: 6px 6px 0 0;
+}
+
+/* Papers inside folder */
+.folder-visual__paper {
+  position: absolute;
+  z-index: 1;
+  bottom: 8%;
+  left: 50%;
+  width: 72%;
+  height: 78%;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 8px;
+  transform: translate(-50%, 8%);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #888;
+  padding: 6px;
+  text-align: center;
+}
+
+.folder-visual__paper--0 { background: rgba(230, 230, 230, 0.9); }
+.folder-visual__paper--1 { background: rgba(242, 242, 242, 0.9); width: 78%; height: 70%; }
+.folder-visual__paper--2 { background: rgba(255, 255, 255, 0.95); width: 84%; height: 62%; }
+.folder-visual__paper--3 { background: rgba(250, 250, 250, 0.95); width: 88%; height: 55%; }
+
+/* Papers peek out when folder opens */
+.folder-visual--open .folder-visual__paper--0 {
+  transform: translate(-80%, -40%) rotate(-8deg);
+}
+.folder-visual--open .folder-visual__paper--1 {
+  transform: translate(-20%, -45%) rotate(4deg);
+}
+.folder-visual--open .folder-visual__paper--2 {
+  transform: translate(-50%, -55%) rotate(-2deg);
+}
+.folder-visual--open .folder-visual__paper--3 {
+  transform: translate(-50%, -30%) rotate(6deg);
+}
+
+/* Front flap */
+.folder-visual__front {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  background: var(--folder-color);
+  border-radius: 6px 12px 12px 12px;
+  transform-origin: bottom center;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.folder-visual--open .folder-visual__front {
+  transform: perspective(300px) rotateX(35deg) scaleY(0.7);
+}
+
+/* Right flap */
+.folder-visual__front-right {
+  position: absolute;
+  z-index: 4;
+  right: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: color-mix(in srgb, var(--folder-color) 92%, white);
+  border-radius: 0 12px 12px 0;
+  transform-origin: bottom right;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
+}
+
+.folder-visual--open .folder-visual__front-right {
+  transform: skewY(-8deg) scaleX(0.6);
+  opacity: 0.5;
+}
+
+/* Hint text */
+.folder-hint {
+  font-size: 13px;
+  color: var(--text-muted, #666);
+  text-align: center;
+  margin: 0;
+  animation: folderHintPulse 2s ease-in-out infinite;
+}
+
+@keyframes folderHintPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* ── Spread-out cards ── */
+.folder-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.4s ease;
+}
+
+.folder-cards--open {
+  max-height: 1200px;
+  opacity: 1;
+}
+
+.folder-card {
+  opacity: 0;
+  transform: translateY(30px) scale(0.9);
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.folder-cards--open .folder-card {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
