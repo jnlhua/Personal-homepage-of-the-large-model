@@ -23,13 +23,13 @@ export default function About() {
       title: '全国计算机二级',
       desc: 'Python 语言程序设计',
       year: '2025',
-      img: '/images/ncre.png',
+      img: '/images/ncre.jpg',
     },
     {
       title: '国家励志奖学金',
       desc: '兰州资源环境职业技术大学',
       year: '2024',
-      img: '/images/guolizhi.png',
+      img: '/images/guolizhi.jpg',
     },
     {
       title: '校级三好学生',

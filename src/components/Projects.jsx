@@ -5,8 +5,8 @@ import BorderGlow from './BorderGlow'
 export default function Projects() {
   const [activeImg, setActiveImg] = useState({ qu: 0, qa: 0 })
 
-  const quImages = ['/images/qu1.png', '/images/qu2.png', '/images/qu3.png']
-  const qaImages = ['/images/qa1.png', '/images/qa2.png', '/images/qa3.png', '/images/qa4.png']
+  const quImages = ['/images/qu1.jpg', '/images/qu2.jpg', '/images/qu3.jpg']
+  const qaImages = ['/images/qa1.jpg', '/images/qa2.jpg', '/images/qa3.jpg', '/images/qa4.jpg']
 
   return (
     <section id="projects" className="projects animate-section">
