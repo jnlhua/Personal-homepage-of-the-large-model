@@ -1,25 +1,50 @@
-import { useEffect, useRef } from 'react'
+import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import DotGrid from './DotGrid'
-import FloatingLines from './FloatingLines'
 import BlurText from './BlurText'
 import ShinyText from './ShinyText'
+
+const FloatingLines = lazy(() => import('./FloatingLines'))
 
 export default function Hero() {
   const heroRef = useRef(null)
   const orbRef1 = useRef(null)
   const orbRef2 = useRef(null)
   const orbRef3 = useRef(null)
+  const [finePointer, setFinePointer] = useState(false)
+  const [showWebGL, setShowWebGL] = useState(false)
 
   useEffect(() => {
+    const query = window.matchMedia('(pointer: fine) and (hover: hover) and (min-width: 769px)')
+    const update = () => setFinePointer(query.matches)
+    update()
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+
+  useEffect(() => {
+    if (!finePointer) {
+      return
+    }
+
+    const schedule = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 900))
+    const cancel = window.cancelIdleCallback || window.clearTimeout
+    const id = schedule(() => setShowWebGL(true), { timeout: 1800 })
+    return () => cancel(id)
+  }, [finePointer])
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-    tl.fromTo('.hero__tag', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, delay: 0.3 })
+    tl.fromTo('.hero__tag', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: reduceMotion ? 0.2 : 0.8, delay: 0.3 })
       .fromTo('.hero__name', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1 }, '-=0.4')
       .fromTo('.hero__title', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8 }, '-=0.5')
       .fromTo('.hero__desc', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, '-=0.4')
       .fromTo('.hero__actions', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, '-=0.3')
       .fromTo('.hero__scroll', { opacity: 0 }, { opacity: 1, duration: 0.8 }, '-=0.2')
+
+    if (reduceMotion) return
 
     gsap.to(orbRef1.current, { x: 30, y: -20, duration: 8, repeat: -1, yoyo: true, ease: 'sine.inOut' })
     gsap.to(orbRef2.current, { x: -25, y: 30, duration: 10, repeat: -1, yoyo: true, ease: 'sine.inOut' })
@@ -33,37 +58,41 @@ export default function Hero() {
         <div className="hero__orb hero__orb--2" ref={orbRef2} />
         <div className="hero__orb hero__orb--3" ref={orbRef3} />
         <div className="hero__grid" />
-        {/* DotGrid background */}
-        <div className="hero__dotgrid">
-          <DotGrid
-            dotSize={3}
-            gap={28}
-            baseColor="#1a1a2e"
-            activeColor="#6366f1"
-            proximity={120}
-            shockRadius={100}
-            shockStrength={3}
-            resistance={600}
-            returnDuration={1}
-          />
-        </div>
-        {/* FloatingLines background */}
-        <div className="hero__floating-lines">
-          <FloatingLines
-            linesGradient={['#6366f1', '#a855f7', '#22d3ee']}
-            enabledWaves={['top', 'middle', 'bottom']}
-            lineCount={[8, 12, 14]}
-            lineDistance={[8, 5, 3]}
-            bendRadius={3.0}
-            bendStrength={-0.8}
-            mouseDamping={0.1}
-            interactive={true}
-            parallax={true}
-            parallaxStrength={0.25}
-            animationSpeed={1.5}
-            mixBlendMode="screen"
-          />
-        </div>
+        {finePointer && (
+          <div className="hero__dotgrid">
+            <DotGrid
+              dotSize={3}
+              gap={32}
+              baseColor="#1a1a2e"
+              activeColor="#6366f1"
+              proximity={100}
+              shockRadius={80}
+              shockStrength={2}
+              resistance={700}
+              returnDuration={0.8}
+            />
+          </div>
+        )}
+        {showWebGL && (
+          <div className="hero__floating-lines">
+            <Suspense fallback={null}>
+              <FloatingLines
+                linesGradient={['#6366f1', '#a855f7', '#22d3ee']}
+                enabledWaves={['top', 'middle', 'bottom']}
+                lineCount={[5, 8, 8]}
+                lineDistance={[8, 5, 4]}
+                bendRadius={2.6}
+                bendStrength={-0.6}
+                mouseDamping={0.12}
+                interactive={true}
+                parallax={true}
+                parallaxStrength={0.16}
+                animationSpeed={1}
+                mixBlendMode="screen"
+              />
+            </Suspense>
+          </div>
+        )}
       </div>
       <div className="hero__content">
         <div className="hero__tag">&lt;AI Engineer /&gt;</div>

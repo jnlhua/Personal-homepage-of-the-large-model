@@ -287,8 +287,12 @@ export default function FloatingLines({
     const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
     camera.position.z = 1;
 
-    const renderer = new WebGLRenderer({ antialias: true, alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const renderer = new WebGLRenderer({
+      antialias: false,
+      alpha: false,
+      powerPreference: 'high-performance'
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
     container.appendChild(renderer.domElement);
@@ -418,8 +422,14 @@ export default function FloatingLines({
     }
 
     let raf = 0;
-    const renderLoop = () => {
+    let lastFrame = 0;
+    const renderLoop = (time = 0) => {
       if (!active) return;
+      if (document.hidden || time - lastFrame < 33) {
+        raf = requestAnimationFrame(renderLoop);
+        return;
+      }
+      lastFrame = time;
 
       uniforms.iTime.value = clock.getElapsedTime();
 

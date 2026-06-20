@@ -111,9 +111,16 @@ const DotGrid = ({
     if (!circlePath) return;
 
     let rafId;
+    let lastFrame = 0;
     const proxSq = proximity * proximity;
 
-    const draw = () => {
+    const draw = (time = 0) => {
+      if (document.hidden || time - lastFrame < 33) {
+        rafId = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrame = time;
+
       const canvas = canvasRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext('2d');

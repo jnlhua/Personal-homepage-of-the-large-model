@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
@@ -17,16 +17,27 @@ gsap.registerPlugin(ScrollTrigger)
 
 function App() {
   const mainRef = useRef(null)
+  const [finePointer, setFinePointer] = useState(false)
 
   useEffect(() => {
+    const query = window.matchMedia('(pointer: fine) and (hover: hover)')
+    const update = () => setFinePointer(query.matches)
+    update()
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
     // Lenis smooth scroll
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: reduceMotion ? 0.4 : 1,
       easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
+      smoothWheel: !reduceMotion,
       touchMultiplier: 2,
       wheelMultiplier: 1,
-      lerp: 0.1,
+      lerp: reduceMotion ? 0.18 : 0.1,
     })
     window.__lenis = lenis
 
@@ -40,9 +51,28 @@ function App() {
     }
     rafId = requestAnimationFrame(raf)
 
-    // ============================================
-    // ABOUT: Left/right slide-in and slide-out (scrubbed)
-    // ============================================
+    const revealOnce = (targets, vars = {}) => {
+      if (!targets || targets.length === 0) return
+      ScrollTrigger.batch(targets, {
+        start: 'top 88%',
+        once: true,
+        onEnter: batch => {
+          gsap.to(batch, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            duration: reduceMotion ? 0.2 : 0.75,
+            stagger: reduceMotion ? 0 : 0.08,
+            ease: 'power3.out',
+            overwrite: true,
+            ...vars,
+          })
+        },
+      })
+    }
+
+    // ABOUT: 进入时一次性 reveal，避免 scrub 长时间线拖慢滚动
     const aboutSection = document.querySelector('#about')
     if (aboutSection) {
       const aboutHeader = aboutSection.querySelector('.anim-item:not([data-anim])')
@@ -63,48 +93,15 @@ function App() {
 
       gsap.set(slideLeftEls, { opacity: 0, x: -250 })
       gsap.set(slideRightEls, { opacity: 0, x: 250 })
-
-      const aboutTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: aboutSection,
-          start: 'top 85%',
-          end: 'bottom 0%',
-          scrub: 3.5,
-        },
-      })
-
-      aboutTl
-        .to(slideLeftEls, { opacity: 1, x: 0, duration: 4, stagger: 0.6, ease: 'power2.out' }, 0)
-        .to(slideRightEls, { opacity: 1, x: 0, duration: 4, stagger: 0.6, ease: 'power2.out' }, 0.4)
-        .to({}, { duration: 3 })
-        .to(slideLeftEls, { opacity: 0, x: -250, duration: 4, stagger: 0.4 }, '+=0')
-        .to(slideRightEls, { opacity: 0, x: 250, duration: 4, stagger: 0.4 }, '<')
+      revealOnce([...slideLeftEls, ...slideRightEls])
     }
 
-    // ============================================
-    // PROJECTS: Fade in/out linked to scroll position (scrubbed)
-    // ============================================
+    // PROJECTS: 一次性 reveal，快速滚动时不再“卡住又消失”
     const projectCards = document.querySelectorAll('#projects .project-card-glow')
-    projectCards.forEach((card) => {
-      gsap.set(card, { opacity: 0, y: 100 })
+    gsap.set(projectCards, { opacity: 0, y: 80 })
+    revealOnce(projectCards)
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: card,
-          start: 'top 90%',
-          end: 'bottom 0%',
-          scrub: 3.5,
-        },
-      })
-
-      tl.to(card, { opacity: 1, y: 0, duration: 4, ease: 'power2.out' }, 0)
-        .to({}, { duration: 3 })
-        .to(card, { opacity: 0, y: -80, duration: 4, ease: 'power2.in' }, '+=0')
-    })
-
-    // ============================================
-    // STRENGTHS: Side cards slide in, middle cards fade in — then reverse
-    // ============================================
+    // STRENGTHS: 只保留进入动画，移除反向退出动画
     const strengthsSection = document.querySelector('#strengths')
     if (strengthsSection) {
       const strengthsHeader = strengthsSection.querySelector('.anim-item:not([data-anim])')
@@ -125,22 +122,7 @@ function App() {
 
       gsap.set(sideCards, { opacity: 0, x: (i) => i % 2 === 0 ? -200 : 200 })
       gsap.set(midCards, { opacity: 0, scale: 0.85 })
-
-      const sTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: strengthsSection,
-          start: 'top 85%',
-          end: 'bottom 0%',
-          scrub: 3.5,
-        },
-      })
-
-      sTl
-        .to(sideCards, { opacity: 1, x: 0, duration: 4, stagger: 0.4, ease: 'power2.out' }, 0)
-        .to(midCards, { opacity: 1, scale: 1, duration: 4, stagger: 0.4, ease: 'power2.out' }, 0.4)
-        .to({}, { duration: 3 })
-        .to(sideCards, { opacity: 0, x: (i) => i % 2 === 0 ? -200 : 200, duration: 4, stagger: 0.3 }, '+=0')
-        .to(midCards, { opacity: 0, scale: 0.85, duration: 4, stagger: 0.3 }, '<')
+      revealOnce([...sideCards, ...midCards])
     }
 
     return () => {
@@ -153,8 +135,12 @@ function App() {
 
   return (
     <div ref={mainRef} className="app">
-      <TargetCursor targetSelector=".cursor-target" spinDuration={2.5} hideDefaultCursor />
-      <CursorTrail />
+      {finePointer && (
+        <>
+          <TargetCursor targetSelector=".cursor-target" spinDuration={2.5} hideDefaultCursor />
+          <CursorTrail />
+        </>
+      )}
       <Navbar />
       <Hero />
       <CurvedLoop

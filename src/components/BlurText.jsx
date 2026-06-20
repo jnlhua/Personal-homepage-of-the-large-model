@@ -37,14 +37,14 @@ const BlurText = ({
 
   const getInitial = (i) => {
     const d = direction === 'top' ? -40 : 40;
-    return { opacity: 0, filter: 'blur(10px)', y: d, transition: { delay: i * stepDuration / 1000, duration: stepDuration } };
+    return { opacity: 0, filter: 'blur(10px)', y: d, transition: { delay: (delay + i * stepDuration) / 1000, duration: stepDuration } };
   };
 
   const getAnimate = (i) => ({
     opacity: 1,
     filter: 'blur(0px)',
     y: 0,
-    transition: { delay: i * stepDuration / 1000, duration: stepDuration, ease: [0.16, 1, 0.3, 1] }
+    transition: { delay: (delay + i * stepDuration) / 1000, duration: stepDuration, ease: [0.16, 1, 0.3, 1] }
   });
 
   return (

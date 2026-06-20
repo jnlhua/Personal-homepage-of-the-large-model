@@ -17,19 +17,19 @@ export default function About() {
       title: '蓝桥杯国赛三等奖',
       desc: '第十七届蓝桥杯 · 鸿蒙应用开发大学组',
       year: '2026',
-      img: '/images/lanqiao.jpg',
+      img: '/images/lanqiao.webp',
     },
     {
       title: '全国计算机二级',
       desc: 'Python 语言程序设计',
       year: '2025',
-      img: '/images/ncre.jpg',
+      img: '/images/ncre.webp',
     },
     {
       title: '国家励志奖学金',
       desc: '兰州资源环境职业技术大学',
       year: '2024',
-      img: '/images/guolizhi.jpg',
+      img: '/images/guolizhi.webp',
     },
     {
       title: '校级三好学生',
@@ -60,7 +60,7 @@ export default function About() {
         <div className="award-card">
           {a.img && (
             <div className="award-card__img">
-              <img src={a.img} alt={a.title} loading="lazy" />
+              <img src={a.img} alt={a.title} loading="lazy" decoding="async" />
             </div>
           )}
           <div className="award-card__body">

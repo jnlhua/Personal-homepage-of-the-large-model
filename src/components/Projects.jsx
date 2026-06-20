@@ -5,8 +5,8 @@ import BorderGlow from './BorderGlow'
 export default function Projects() {
   const [activeImg, setActiveImg] = useState({ qu: 0, qa: 0 })
 
-  const quImages = ['/images/qu1.jpg', '/images/qu2.jpg', '/images/qu3.jpg']
-  const qaImages = ['/images/qa1.jpg', '/images/qa2.jpg', '/images/qa3.jpg', '/images/qa4.jpg']
+  const quImages = ['/images/qu1.webp', '/images/qu2.webp', '/images/qu3.webp']
+  const qaImages = ['/images/qa1.webp', '/images/qa2.webp', '/images/qa3.webp', '/images/qa4.webp']
 
   return (
     <section id="projects" className="projects animate-section">
@@ -38,6 +38,8 @@ export default function Projects() {
                 src={quImages[activeImg.qu]}
                 alt="衢小游演示"
                 className="project-card__main-img"
+                loading="lazy"
+                decoding="async"
               />
               <div className="project-card__thumbs">
                 {quImages.map((img, i) => (
@@ -46,7 +48,7 @@ export default function Projects() {
                     className={`project-card__thumb ${activeImg.qu === i ? 'project-card__thumb--active' : ''}`}
                     onClick={() => setActiveImg((p) => ({ ...p, qu: i }))}
                   >
-                    <img src={img} alt={`衢小游 ${i + 1}`} loading="lazy" />
+                    <img src={img} alt={`衢小游 ${i + 1}`} loading="lazy" decoding="async" />
                   </button>
                 ))}
               </div>
@@ -154,6 +156,8 @@ export default function Projects() {
                 src={qaImages[activeImg.qa]}
                 alt="问答助手演示"
                 className="project-card__main-img"
+                loading="lazy"
+                decoding="async"
               />
               <div className="project-card__thumbs">
                 {qaImages.map((img, i) => (
@@ -162,7 +166,7 @@ export default function Projects() {
                     className={`project-card__thumb ${activeImg.qa === i ? 'project-card__thumb--active' : ''}`}
                     onClick={() => setActiveImg((p) => ({ ...p, qa: i }))}
                   >
-                    <img src={img} alt={`问答助手 ${i + 1}`} loading="lazy" />
+                    <img src={img} alt={`问答助手 ${i + 1}`} loading="lazy" decoding="async" />
                   </button>
                 ))}
               </div>
